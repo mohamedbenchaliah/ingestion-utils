@@ -1,0 +1,29 @@
+[run]
+branch = True
+omit =
+    *__init__.py*
+    gdw_engine/__metadata__.py
+    gdw_engine/bigquery_utils/_schema_update.py
+    gdw_engine/ga_processor/_shards_loader.py
+    gdw_engine/loader/_create.py
+    gdw_engine/loader/_file_data_loader.py
+    gdw_engine/loader/_loader.py
+    gdw_engine/quality/_checksum.py
+    gdw_engine/quality/_comparator.py
+    gdw_engine/quality/_quality.py
+
+[report]
+# Regexes for lines to exclude from consideration
+exclude_lines =
+    pragma: no cover
+    def _[^(]*[^_][(]
+    raise BaseException
+    raise ValueError
+    raise ApiError
+    except Exception as e:
+    except BaseException as e:
+    except ValueError as e:
+    (.*)except Exception as e:(.*)
+    (.*)except BaseException as e:(.*)
+    def __repr__
+ignore_errors = True

@@ -1,0 +1,75 @@
+steps:
+  # Prepare Image
+  - name: python:3.8.13-slim-buster
+    id: Prepare Image
+    entrypoint: pip
+    args: []
+
+  # Install dependencies
+  - name: python:3.8.13-slim-buster
+    id: Install dependencies
+    entrypoint: /bin/sh
+    args:
+      - '-c'
+      - |
+        python --version \
+        && apt-get update \
+        && apt-get -y install build-essential \
+        && python3 --version \
+        && ls -lrt \
+        && make freeze \
+        && make install-all \
+        && ls -lrt /workspace/dist/ \
+        && ls -lrt /workspace/gdw_engine/
+
+  # Launch Tests
+  #- name: python:3.8.13-slim-buster
+  #  id: Launch Tests
+  #  entrypoint: /bin/sh
+  #  args:
+  #    - '-c'
+  #    - |
+  #      ls -lrt \
+  #      && apt-get update -y \
+  #      && apt-get install build-essential flake8 black mypy -y \
+  #      && pip3 install pytest coverage \
+  #      && make lint \
+  #      && make format \
+  #      && make typing \
+  #      && make test \
+  #      && make coverage \
+  #      && make install-all
+
+  # Package
+  - name: python:3.8.13-slim-buster
+    id: Package
+    entrypoint: /bin/sh
+    args:
+      - '-c'
+      - |
+        ls -lrt \
+        && apt-get update -y \
+        && apt-get -y install zip curl \
+        && apt-get install build-essential -y \
+        && make package        
+
+
+  # Deploy
+  - name: google/cloud-sdk
+    id: Deploy artifacts
+    entrypoint: /bin/sh
+    args:
+      - '-c'
+      - |
+        apt-get update \
+        && apt-get -y install zip \
+        && apt-get -y install build-essential \
+        && ls -lrt /workspace/dist/ \
+        && ls -lrt /workspace/gdw_engine/ \
+        && cd /workspace \
+        && cp -R /workspace/dist/ /dist \
+        && cp -R /workspace/gdw_engine/ /gdw_engine \
+        && ls -lrt \
+        && make deploy
+
+timeout: '1800s'
